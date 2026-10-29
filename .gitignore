@@ -1,0 +1,23 @@
+# Local tool state and regenerable output; keep sources and validation evidence.
+**/.Xil/
+**/.cache/
+**/__pycache__/
+**/*.jou
+**/*.log
+**/*.str
+hardware/*.cache/
+hardware/*.runs/
+hardware/*.sim/
+hardware/*.ip_user_files/
+hardware/*.hw/
+hardware/results/
+hardware/exports/
+software/**/build/
+software/**/logs/
+software/.rigel_lopper/
+software_backups/
+artifacts/
+# Preserve generated wrapper until Vivado regenerates block-design outputs.
+hardware/*.gen/**
+!hardware/*.gen/**/
+!hardware/*.gen/**/design_1_wrapper.v

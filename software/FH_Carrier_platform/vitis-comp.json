@@ -1,0 +1,100 @@
+{
+  "name": "FH_Carrier_platform",
+  "type": "PLATFORM",
+  "configuration": {
+    "description": "",
+    "xsa": "C:/Projects/FH_Bringup/hardware/exports/gmax3412_pl_ddr/FH_Carrier_Bringup_GMAX3412_PL_DDR.xsa",
+    "xsaPathInPlatform": "FH_Carrier_platform/hw/FH_Carrier_Bringup_GMAX3412_PL_DDR.xsa",
+    "emulationXsa": "",
+    "emulationXsaPathInPlatform": "",
+    "isCustomFSBL": false,
+    "fsblPath": "",
+    "pmufwElf": "",
+    "flow": "EMBEDDED",
+    "processorsMap": {
+      "psu_cortexa53_0": "psu_cortexa53",
+      "psu_cortexa53_1": "psu_cortexa53",
+      "psu_cortexa53_2": "psu_cortexa53",
+      "psu_cortexa53_3": "psu_cortexa53",
+      "psu_cortexr5_0": "psu_cortexr5",
+      "psu_cortexr5_1": "psu_cortexr5",
+      "psu_pmu_0": "psu_pmu"
+    },
+    "supportedOS": [
+      "standalone",
+      "freertos",
+      "linux"
+    ],
+    "supportedFamily": "zynquplus",
+    "stdGenHookList": [
+      {
+        "key": "VITIS_SDT_REPO",
+        "value": ""
+      },
+      {
+        "key": "VITIS_SDT_BOARD_DTS",
+        "value": ""
+      },
+      {
+        "key": "VITIS_SDT_INCLUDE_DTS",
+        "value": ""
+      },
+      {
+        "key": "-dt_overlay",
+        "value": "0"
+      },
+      {
+        "key": "custom_dtsi",
+        "value": ""
+      }
+    ],
+    "componentType": "PLATFORM",
+    "domains": [
+      {
+        "name": "zynqmp_fsbl",
+        "displayName": "zynqmp_fsbl",
+        "processor": "psu_cortexa53_0",
+        "cpuType": "cortex-a53",
+        "cpuInstance": "psu_cortexa53_0",
+        "os": "standalone",
+        "appTemplate": "zynqmp_fsbl",
+        "isBootDomain": true,
+        "qemuData": "resources/zynqmp_fsbl/qemu",
+        "qemuArgsFile": "resources/zynqmp_fsbl/qemu/qemu_args.txt",
+        "pmcQemuArgsFile": "resources/zynqmp_fsbl/qemu/pmu_args.txt",
+        "isBSPGenReq": false
+      },
+      {
+        "name": "standalone_psu_cortexa53_0",
+        "displayName": "standalone_psu_cortexa53_0",
+        "processor": "psu_cortexa53_0",
+        "cpuType": "cortex-a53",
+        "cpuInstance": "psu_cortexa53_0",
+        "os": "standalone",
+        "appTemplate": "empty_application",
+        "isBootDomain": false,
+        "qemuData": "resources/standalone_psu_cortexa53_0/qemu",
+        "qemuArgsFile": "resources/standalone_psu_cortexa53_0/qemu/qemu_args.txt",
+        "pmcQemuArgsFile": "resources/standalone_psu_cortexa53_0/qemu/pmu_args.txt",
+        "isBSPGenReq": false
+      },
+      {
+        "name": "fsbl_ibert_domain",
+        "displayName": "fsbl_ibert_domain",
+        "processor": "psu_cortexa53_2",
+        "cpuType": "cortex-a53",
+        "cpuInstance": "psu_cortexa53_2",
+        "os": "standalone",
+        "appTemplate": "zynqmp_fsbl",
+        "isBootDomain": false,
+        "qemuData": "resources/fsbl_ibert_domain/qemu",
+        "qemuArgsFile": "resources/fsbl_ibert_domain/qemu/qemu_args.txt",
+        "pmcQemuArgsFile": "resources/fsbl_ibert_domain/qemu/pmu_args.txt",
+        "isBSPGenReq": false
+      }
+    ],
+    "emptyToolchainConfiguration": []
+  },
+  "useSysrootToolchain": false,
+  "templateFlow": "VITIS"
+}
