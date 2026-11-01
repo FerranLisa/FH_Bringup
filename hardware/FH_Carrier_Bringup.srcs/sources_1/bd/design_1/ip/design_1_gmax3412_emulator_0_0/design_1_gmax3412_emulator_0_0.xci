@@ -10,11 +10,13 @@
       "component_parameters": {
         "IMAGE_WIDTH": [ { "value": "4096", "format": "long", "enabled": false, "usage": "all" } ],
         "IMAGE_HEIGHT": [ { "value": "3072", "format": "long", "enabled": false, "usage": "all" } ],
+        "LANES": [ { "value": "16", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "Component_Name": [ { "value": "design_1_gmax3412_emulator_0_0", "resolve_type": "user", "usage": "all" } ]
       },
       "model_parameters": {
         "IMAGE_WIDTH": [ { "value": "4096", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "IMAGE_HEIGHT": [ { "value": "3072", "resolve_type": "generated", "format": "long", "usage": "all" } ]
+        "IMAGE_HEIGHT": [ { "value": "3072", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "LANES": [ { "value": "16", "resolve_type": "generated", "format": "long", "usage": "all" } ]
       },
       "project_parameters": {
         "ARCHITECTURE": [ { "value": "zynquplus", "resolve_type": "generated", "usage": "all" } ],
@@ -67,6 +69,7 @@
         "acquisition_start": [ { "direction": "in" } ],
         "acquisition_stop": [ { "direction": "in" } ],
         "trigger_in": [ { "direction": "in" } ],
+        "readout_in": [ { "direction": "in" } ],
         "clk_rxg": [ { "direction": "out" } ],
         "rst_rxg": [ { "direction": "out" } ],
         "fvalout": [ { "direction": "out" } ],
@@ -76,7 +79,8 @@
         "armed": [ { "direction": "out" } ],
         "busy": [ { "direction": "out" } ],
         "cmos_texp1": [ { "direction": "out" } ],
-        "cmos_texp2": [ { "direction": "out" } ]
+        "cmos_texp2": [ { "direction": "out" } ],
+        "flash_out": [ { "direction": "out" } ]
       },
       "interfaces": {
         "s_axi_aclk": {
@@ -215,5 +219,5 @@
       }
     }
   },
-  "checksum": "13462f24"
+  "checksum": "f1438c4f"
 }

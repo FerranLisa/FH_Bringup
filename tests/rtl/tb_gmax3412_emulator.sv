@@ -105,7 +105,7 @@ module tb_gmax3412_emulator;
         .frames(fault_frames),.errors(fault_errors),.last_pass(fault_pass));
     initial begin
         tick(5); resetn=1; tick(2);
-        rd('h00,32'h34120001,0);
+        rd('h00,32'h34120025,0);
         wr('h04,8,0,15,0); rd('h24,1,0); // uninitialized trigger rejected
         wr('h0c,13,1,15,0); wr('h10,3,0,15,0);
         wr('h14,32'h12340000,1,15,0); wr('h14,7,0,1,0);

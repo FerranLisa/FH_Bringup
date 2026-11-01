@@ -27,6 +27,9 @@ try:
         raise RuntimeError('Regenerated BSP does not describe the 64-bit DMA')
     if not re.search(r'XPAR_GMAX_PL_RING_CTRL_BASEADDR\s+0xa0070000',params,re.I):
         raise RuntimeError('Scheduler control missing from regenerated BSP')
+    for name,address in [('GMAX_CAPTURE_CTRL_B','a0090000'),('GMAX_CAPTURE_DMA_B','a00a0000'),('GMAX_DUAL_RING_CTRL','a00b0000')]:
+        if not re.search(r'XPAR_'+name+r'_BASEADDR\s+0x'+address,params,re.I):
+            raise RuntimeError('V25 peripheral missing from BSP: '+name)
     if client.get_component(name='FH_Carrier_Test').build()!=build_pb2.BuildResponse.SUCCESS:
         raise RuntimeError('Application build failed; inspect Vitis build log')
     print('VITIS_V24_UPDATE_PASS')

@@ -3,11 +3,22 @@ proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "Component_Name"
   #Adding Page
   set Page_0 [ipgui::add_page $IPINST -name "Page 0"]
+  ipgui::add_param $IPINST -name "AXIS_WIDTH" -parent ${Page_0}
   ipgui::add_param $IPINST -name "DEPTH" -parent ${Page_0}
   ipgui::add_param $IPINST -name "HEIGHT" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "LANES" -parent ${Page_0}
   ipgui::add_param $IPINST -name "WIDTH" -parent ${Page_0}
 
 
+}
+
+proc update_PARAM_VALUE.AXIS_WIDTH { PARAM_VALUE.AXIS_WIDTH } {
+	# Procedure called to update AXIS_WIDTH when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.AXIS_WIDTH { PARAM_VALUE.AXIS_WIDTH } {
+	# Procedure called to validate AXIS_WIDTH
+	return true
 }
 
 proc update_PARAM_VALUE.DEPTH { PARAM_VALUE.DEPTH } {
@@ -25,6 +36,15 @@ proc update_PARAM_VALUE.HEIGHT { PARAM_VALUE.HEIGHT } {
 
 proc validate_PARAM_VALUE.HEIGHT { PARAM_VALUE.HEIGHT } {
 	# Procedure called to validate HEIGHT
+	return true
+}
+
+proc update_PARAM_VALUE.LANES { PARAM_VALUE.LANES } {
+	# Procedure called to update LANES when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.LANES { PARAM_VALUE.LANES } {
+	# Procedure called to validate LANES
 	return true
 }
 
@@ -51,5 +71,15 @@ proc update_MODELPARAM_VALUE.HEIGHT { MODELPARAM_VALUE.HEIGHT PARAM_VALUE.HEIGHT
 proc update_MODELPARAM_VALUE.DEPTH { MODELPARAM_VALUE.DEPTH PARAM_VALUE.DEPTH } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.DEPTH}] ${MODELPARAM_VALUE.DEPTH}
+}
+
+proc update_MODELPARAM_VALUE.LANES { MODELPARAM_VALUE.LANES PARAM_VALUE.LANES } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.LANES}] ${MODELPARAM_VALUE.LANES}
+}
+
+proc update_MODELPARAM_VALUE.AXIS_WIDTH { MODELPARAM_VALUE.AXIS_WIDTH PARAM_VALUE.AXIS_WIDTH } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.AXIS_WIDTH}] ${MODELPARAM_VALUE.AXIS_WIDTH}
 }
 

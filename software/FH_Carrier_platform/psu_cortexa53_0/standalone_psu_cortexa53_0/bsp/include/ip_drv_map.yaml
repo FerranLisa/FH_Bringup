@@ -10,12 +10,24 @@ axi_iic_gmax_a:
 gmax3412_emulator_0:
 - gmax3412_emulator
 - None
+gmax3412_emulator_1:
+- gmax3412_emulator
+- None
 gmax_capture_ctrl:
+- axi_gpio
+- gpio
+gmax_capture_ctrl_b:
 - axi_gpio
 - gpio
 gmax_capture_dma:
 - axi_dma
 - axidma
+gmax_capture_dma_b:
+- axi_dma
+- axidma
+gmax_dual_ring_ctrl:
+- axi_gpio
+- gpio
 gmax_pl_ring_ctrl:
 - axi_gpio
 - gpio

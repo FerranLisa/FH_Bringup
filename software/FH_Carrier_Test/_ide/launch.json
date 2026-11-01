@@ -1,75 +1,71 @@
 {
-    "version":  "0.2.0",
-    "configurations":  [
-                           {
-                               "type":  "tcf-debug",
-                               "request":  "launch",
-                               "name":  "FH_Carrier_Test_app_hw_1",
-                               "debugType":  "baremetal-zu",
-                               "attachToRunningTargetOptions":  {
-                                                                    "targetSetupMode":  "standalone",
-                                                                    "executeScript":  true,
-                                                                    "scriptPath":  ""
-                                                                },
-                               "autoAttachProcessChildren":  false,
-                               "target":  {
-                                              "targetConnectionId":  "Local",
-                                              "peersIniPath":  "../../_ide/.peers.ini",
-                                              "context":  "ZUPlus"
-                                          },
-                               "pathMap":  [
-
-                                           ],
-                               "targetSetup":  {
-                                                   "resetSystem":  true,
-                                                   "programDevice":  true,
-                                                   "partialBitstream":  false,
-                                                   "skipRevisionCheck":  false,
-                                                   "device":  {
-                                                                  "plDevice":  "Auto Detect",
-                                                                  "psDevice":  "Auto Detect"
-                                                              },
-                                                   "enableRPUSplitMode":  false,
-                                                   "resetAPU":  false,
-                                                   "resetRPU":  false,
-                                                   "bitstreamFile":  "C:\\Projects\\FH_Bringup\\hardware\\exports\\gmax3412_pl_ddr\\FH_Carrier_Bringup_GMAX3412_PL_DDR.bit",
-                                                   "zuInitialization":  {
-                                                                            "isFsbl":  true,
-                                                                            "usingFSBL":  {
-                                                                                              "initWithFSBL":  true,
-                                                                                              "fsblFile":  "${workspaceFolder}\\FH_Carrier_platform\\export\\FH_Carrier_platform\\sw\\boot\\fsbl.elf",
-                                                                                              "fsblExitSymbol":  "XFsbl_Exit"
-                                                                                          },
-                                                                            "usingPsuInit":  {
-                                                                                                 "runPsuInit":  true,
-                                                                                                 "plPowerup":  true,
-                                                                                                 "psuInitTclFile":  "${workspaceFolder}\\FH_Carrier_Test\\_ide\\psinit\\psu_init.tcl"
-                                                                                             }
-                                                                        },
-                                                   "zuTraceOptions":  {
-                                                                          "isSelected":  false,
-                                                                          "scratchAddress":  "0x60000",
-                                                                          "scratchSize":  "0x60000",
-                                                                          "traceOutputPath":  ""
-                                                                      },
-                                                   "downloadElf":  [
-                                                                       {
-                                                                           "core":  "psu_cortexa53_0",
-                                                                           "resetProcessor":  true,
-                                                                           "elfFile":  "${workspaceFolder}\\FH_Carrier_Test\\build\\FH_Carrier_Test.elf",
-                                                                           "stopAtEntry":  false,
-                                                                           "isSelfRelocatingApp":  false,
-                                                                           "relativeAddress":  ""
-                                                                       }
-                                                                   ],
-                                                   "crossTriggerBreakpoints":  {
-                                                                                   "isSelected":  false,
-                                                                                   "breakpoints":  [
-
-                                                                                                   ]
-                                                                               }
-                                               },
-                               "internalConsoleOptions":  "openOnSessionStart"
-                           }
-                       ]
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "tcf-debug",
+			"request": "launch",
+			"name": "FH_Carrier_Test_app_hw_1",
+			"debugType": "baremetal-zu",
+			"attachToRunningTargetOptions": {
+				"targetSetupMode": "standalone",
+				"executeScript": true,
+				"scriptPath": ""
+			},
+			"autoAttachProcessChildren": false,
+			"target": {
+				"targetConnectionId": "Local",
+				"peersIniPath": "../../_ide/.peers.ini",
+				"context": "ZUPlus"
+			},
+			"pathMap": [],
+			"targetSetup": {
+				"resetSystem": true,
+				"programDevice": true,
+				"partialBitstream": false,
+				"skipRevisionCheck": false,
+				"device": {
+					"plDevice": "Auto Detect",
+					"psDevice": "Auto Detect"
+				},
+				"enableRPUSplitMode": false,
+				"resetAPU": false,
+				"resetRPU": false,
+				"bitstreamFile": "C:\\Projects\\FH_Bringup\\hardware\\exports\\gmax3412_pl_ddr\\FH_Carrier_Bringup_GMAX3412_PL_DDR.bit",
+				"zuInitialization": {
+					"isFsbl": true,
+					"usingFSBL": {
+						"initWithFSBL": true,
+						"fsblFile": "${workspaceFolder}\\FH_Carrier_platform\\export\\FH_Carrier_platform\\sw\\boot\\fsbl.elf",
+						"fsblExitSymbol": "XFsbl_Exit"
+					},
+					"usingPsuInit": {
+						"runPsuInit": true,
+						"plPowerup": true,
+						"psuInitTclFile": "${workspaceFolder}\\FH_Carrier_Test\\_ide\\psinit\\psu_init.tcl"
+					}
+				},
+				"zuTraceOptions": {
+					"isSelected": false,
+					"scratchAddress": "0x60000",
+					"scratchSize": "0x60000",
+					"traceOutputPath": ""
+				},
+				"downloadElf": [
+					{
+						"core": "psu_cortexa53_0",
+						"resetProcessor": true,
+						"elfFile": "${workspaceFolder}\\FH_Carrier_Test\\build\\FH_Carrier_Test.elf",
+						"stopAtEntry": false,
+						"isSelfRelocatingApp": false,
+						"relativeAddress": ""
+					}
+				],
+				"crossTriggerBreakpoints": {
+					"isSelected": false,
+					"breakpoints": []
+				}
+			},
+			"internalConsoleOptions": "openOnSessionStart"
+		}
+	]
 }

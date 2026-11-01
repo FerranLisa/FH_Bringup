@@ -229,7 +229,12 @@ drv_info:
     ip_name: axi_iic
     path: C:\AMDDesignTools\2025.2\Vitis\data\embeddedsw\XilinxProcessorIPLib\drivers\iic_v3_14
   gmax3412_emulator_0: None
+  gmax3412_emulator_1: None
   gmax_capture_ctrl:
+    driver: gpio
+    ip_name: axi_gpio
+    path: C:\AMDDesignTools\2025.2\Vitis\data\embeddedsw\XilinxProcessorIPLib\drivers\gpio_v4_12
+  gmax_capture_ctrl_b:
     driver: gpio
     ip_name: axi_gpio
     path: C:\AMDDesignTools\2025.2\Vitis\data\embeddedsw\XilinxProcessorIPLib\drivers\gpio_v4_12
@@ -237,6 +242,14 @@ drv_info:
     driver: axidma
     ip_name: axi_dma
     path: C:\AMDDesignTools\2025.2\Vitis\data\embeddedsw\XilinxProcessorIPLib\drivers\axidma_v9_20
+  gmax_capture_dma_b:
+    driver: axidma
+    ip_name: axi_dma
+    path: C:\AMDDesignTools\2025.2\Vitis\data\embeddedsw\XilinxProcessorIPLib\drivers\axidma_v9_20
+  gmax_dual_ring_ctrl:
+    driver: gpio
+    ip_name: axi_gpio
+    path: C:\AMDDesignTools\2025.2\Vitis\data\embeddedsw\XilinxProcessorIPLib\drivers\gpio_v4_12
   gmax_pl_ring_ctrl:
     driver: gpio
     ip_name: axi_gpio

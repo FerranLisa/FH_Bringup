@@ -31,6 +31,13 @@
 #include "xfsbl_hw.h"
 #include "xfsbl_hooks.h"
 #include "psu_init.h"
+#include "../../FH_Carrier_Test/src/fh_sensor_control.h"
+/* Available to board-specific post-bitstream startup code; never called before
+ * PL/GPIO and sensor power/clock/reset initialization. */
+int FhFsblSensorSpiWrite(UINTPTR gpio, u16 address, u8 value)
+{
+    return fh_sensor_spi_write(gpio,address,value);
+}
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/

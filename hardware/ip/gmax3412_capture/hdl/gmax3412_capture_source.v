@@ -1,12 +1,18 @@
 `timescale 1ns/1ps
 // One frame per request. Unthrottleable input; overflow is fatal for this frame.
-module gmax3412_capture_source #(parameter WIDTH=4096, HEIGHT=3072, DEPTH=1024)(
+module gmax3412_capture_source #(parameter WIDTH=4096, HEIGHT=3072, DEPTH=1024, DYNAMIC_ROI=0, LANES=16)(
  input wire src_clk, dst_clk, resetn, request,
- input wire fval,lval, input wire [191:0] data,
- output wire [256:0] fifo_data, output wire empty, input wire pop,
+ input wire roi_mode,
+ input wire fval,lval, input wire [12*LANES-1:0] data,
+ output wire [16*LANES:0] fifo_data, output wire empty, input wire pop,
  output wire ready, finished, overflow, geometry, dropped
 );
  wire req;
+ wire roi_sync;
+ reg active_roi=0;
+ wire [31:0] active_height=active_roi ? 1024 : HEIGHT;
+ xpm_cdc_single #(.DEST_SYNC_FF(3),.SRC_INPUT_REG(1)) roi_cdc
+ (.src_clk(dst_clk),.src_in(DYNAMIC_ROI && roi_mode),.dest_clk(src_clk),.dest_out(roi_sync));
  xpm_cdc_single #(.DEST_SYNC_FF(3),.SRC_INPUT_REG(1)) req_cdc
  (.src_clk(dst_clk),.src_in(request & resetn),.dest_clk(src_clk),.dest_out(req));
  wire rst = !req;
@@ -17,17 +23,17 @@ module gmax3412_capture_source #(parameter WIDTH=4096, HEIGHT=3072, DEPTH=1024)(
  reg ov=0,geo=0,drop=0;
  wire taking = req && !wr_busy && !ov &&
                   ((state==2 && fval && !pf) || state==3);
- wire push = taking && fval && lval && words < WIDTH*HEIGHT/16 && !full;
- wire last = words==WIDTH*HEIGHT/16-1;
- wire [255:0] packed_pixels;
+ wire push = taking && fval && lval && words < WIDTH*active_height/LANES && !full;
+ wire last = words==WIDTH*active_height/LANES-1;
+ wire [16*LANES-1:0] packed_pixels;
  genvar i;
- generate for(i=0;i<16;i=i+1) begin
+ generate for(i=0;i<LANES;i=i+1) begin
    assign packed_pixels[16*i +: 16] = {4'b0,data[12*i +: 12]};
  end endgenerate
  always @(posedge src_clk) begin
    pf<=fval; pl<=lval;
    if(rst) begin
-     state<=0;words<=0;line_words<=0;lines<=0;ov<=0;geo<=0;drop<=0;
+     active_roi<=roi_sync;state<=0;words<=0;line_words<=0;lines<=0;ov<=0;geo<=0;drop<=0;
    end else if(!wr_busy) begin
      case(state)
        0: if(!fval) state<=2;
@@ -40,14 +46,14 @@ module gmax3412_capture_source #(parameter WIDTH=4096, HEIGHT=3072, DEPTH=1024)(
        if(full) ov<=1;
        words<=words+1;
        line_words<=line_words+1;
-       if(words>=WIDTH*HEIGHT/16) geo<=1;
+       if(words>=WIDTH*active_height/LANES) geo<=1;
      end
      if(state==3 && pl && !lval) begin
-       if(line_words!=WIDTH/16) geo<=1;
+       if(line_words!=WIDTH/LANES) geo<=1;
        line_words<=0;lines<=lines+1;
      end
      if(state==3 && pf && !fval) begin
-       if(words!=WIDTH*HEIGHT/16 || lines+(pl && !lval)!=HEIGHT || lval)
+       if(words!=WIDTH*active_height/LANES || lines+(pl && !lval)!=active_height || lval)
          geo<=1;
      end
      if(lval && !fval) geo<=1;
@@ -55,7 +61,7 @@ module gmax3412_capture_source #(parameter WIDTH=4096, HEIGHT=3072, DEPTH=1024)(
  end
  wire raw_empty;
  xpm_fifo_async #(.FIFO_MEMORY_TYPE("block"),.FIFO_WRITE_DEPTH(DEPTH),
- .WRITE_DATA_WIDTH(257),.READ_DATA_WIDTH(257),.READ_MODE("fwft"),
+ .WRITE_DATA_WIDTH(16*LANES+1),.READ_DATA_WIDTH(16*LANES+1),.READ_MODE("fwft"),
  .FIFO_READ_LATENCY(0),.CDC_SYNC_STAGES(3),.DOUT_RESET_VALUE("0"),
  .USE_ADV_FEATURES("0000"),.WR_DATA_COUNT_WIDTH($clog2(DEPTH)+1),
  .RD_DATA_COUNT_WIDTH($clog2(DEPTH)+1)) fifo (

@@ -72,6 +72,30 @@ try {
                 if(!$parameter -or $parameter.VALUE -ne $setting.Value){throw "Incorrect exported DDR setting: $($setting.Key)"}
             }
             if($hwh -notmatch 'gmax_pl_ring' -or $hwh -notmatch 'A0070000' -or $hwh -notmatch 'pl_ddr4'){throw 'PL ring/MIG missing'}
+            $dual=$xml.SelectSingleNode("//MODULE[@INSTANCE='gmax_dual_ring']")
+            if(!$dual){throw 'V25 dual controller absent from working export'}
+            foreach($instance in @('gmax3412_emulator_1','gmax_capture_b','gmax_capture_ctrl_b','gmax_dual_ring_ctrl')) {
+                if(!$xml.SelectSingleNode("//MODULE[@INSTANCE='$instance']")){throw "V25 instance missing: $instance"}
+            }
+            $dmaB=$xml.SelectSingleNode("//MODULE[@INSTANCE='gmax_capture_dma_b']")
+            foreach($instance in @('gmax_capture_dma','gmax_capture_dma_b')) {
+                $wide=$xml.SelectSingleNode("//MODULE[@INSTANCE='$instance']")
+                foreach($name in @('c_m_axi_s2mm_data_width','c_s_axis_s2mm_tdata_width')) {
+                    $parameter=$wide.SelectSingleNode("PARAMETERS/PARAMETER[@NAME='$name']")
+                    if(!$parameter -or $parameter.VALUE -ne '256'){throw "V27 requires $instance $name=256; stale hardware export"}
+                }
+            }
+            foreach($instance in @('gmax3412_emulator_0','gmax3412_emulator_1')) {
+                $wide=$xml.SelectSingleNode("//MODULE[@INSTANCE='$instance']")
+                $parameter=$wide.SelectSingleNode("PARAMETERS/PARAMETER[@NAME='LANES']")
+                if(!$parameter -or $parameter.VALUE -ne '16'){throw "V27 requires $instance LANES=16; stale hardware export"}
+            }
+            if(!$dmaB -or $dmaB.SelectSingleNode("PARAMETERS/PARAMETER[@NAME='c_addr_width']").VALUE -ne '64') {throw 'Second DMA width incorrect'}
+            $plB=$dmaB.SelectSingleNode(".//MEMRANGE[@BASEVALUE='0x1000000000']")
+            if(!$plB -or $plB.HIGHVALUE -ne '0x10FFFFFFFF'){throw 'Second DMA PL DDR aperture missing'}
+            foreach($address in @('A0080000','A0090000','A00A0000','A00B0000')) {
+                if($hwh -notmatch $address){throw "V25 address missing: $address"}
+            }
             $foundEmulator = $true
         }
     }

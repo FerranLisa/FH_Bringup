@@ -1,3 +1,30 @@
+# V27 specification controller
+
+The main project now uses 16 channels and one 256-bit AXIS beat per 16 pixels.
+FIFO depth remains 4096 for emulator capture. Reception starts on FV after
+the controller arms the bridge; exposure of a later frame can overlap readout.
+The physical input is again the original 192-bit bus without padding.
+See `../../../docs/DUAL_STREAM.md` for current operation and limitations.
+
+## Superseded V26 notes
+
+The main project uses `LANES=32`, `AXIS_WIDTH=512`, and `DEPTH=4096` for
+emulator FIFOs. One 512-bit beat carries all 32 pixels, with unchanged 16-bit
+row-major memory layout. Default parameters retain the legacy 16-pixel source
+and two 128-bit output beats for unit tests. The unused physical receive input
+is padded in the BD; it is not enabled for wide-emulator acquisition.
+
+## Previous V25 register extension
+
+Control bit 8 selects 4096x1024 ROI geometry; zero retains the full-frame format.
+Set it while capture is reset, allow configuration to settle, then assert request
+bit 0. Geometry is held for the frame. This changes the expected frame size and
+TLAST position; it does not crop an incoming full-frame source. The emulator must
+be configured to emit matching geometry. The legacy reported maximum payload
+size remains unchanged for backward-compatible full-frame diagnostics.
+
+See `../../../docs/DUAL_STREAM.md` for the current dual-sensor integration.
+
 # GMAX3412 DDR capture milestone
 
 `gmax3412_capture` accepts either of two 192-bit, 16-slot image sources,

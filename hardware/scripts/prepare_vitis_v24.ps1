@@ -22,7 +22,7 @@ if($platformXsas.Count -ne 1) {
 }
 if($platformXsas.Count -ne 1){throw 'Cannot identify the currently selected exported platform XSA.'}
 $platformXsa=$platformXsas[0].FullName
-# v24 changes PL addressing. Require unchanged PS init before platform regeneration.
+# V25 extends PL addressing. Require unchanged PS init before platform regeneration.
 # Permit the proven capture BSP only when its PS initialization matches exactly.
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 function Get-XsaEntryHash([string]$Path,[string]$Name) {
@@ -49,17 +49,14 @@ if((Get-FileHash $fsblSource).Hash -ne (Get-FileHash $generated).Hash){throw 'FS
 $config=Get-Content -LiteralPath $launch -Raw | ConvertFrom-Json
 $matches=@($config.configurations | Where-Object {$_.name -eq 'FH_Carrier_Test_app_hw_1'})
 if($matches.Count -ne 1){throw 'Expected one FH_Carrier_Test_app_hw_1 launch configuration.'}
-if($ValidateOnly) {Write-Host 'PASS: v24 preparation prerequisites validated; Vitis files unchanged.';return}
+if($ValidateOnly) {Write-Host 'PASS: V25 preparation prerequisites validated; Vitis files unchanged.';return}
 $workspacePath=(Resolve-Path -LiteralPath $Workspace).Path.TrimEnd('\','/')
-# A complete platform backup contains vitis-comp.json. Keep it outside the
-# workspace so Vitis cannot discover a second component with the same name.
-$backupRoot=Join-Path (Split-Path $workspacePath -Parent) ((Split-Path $workspacePath -Leaf)+'_backups')
-$backup=Join-Path $backupRoot ('v24_backup_'+[Guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Path $backup | Out-Null
-Copy-Item -LiteralPath $target -Destination (Join-Path $backup 'BringupTest.c')
-Copy-Item -LiteralPath $launch -Destination (Join-Path $backup 'launch.json')
-Copy-Item -LiteralPath $platform -Destination (Join-Path $backup 'FH_Carrier_platform') -Recurse
-Copy-Item -LiteralPath (Join-Path $app 'src/lscript.ld') -Destination (Join-Path $backup 'lscript.ld')
+# Preserve recovery material as an archive in the existing artifacts directory.
+# No extra Vitis component directory or version-specific workspace is created.
+$backupRoot=Join-Path (Split-Path $workspacePath -Parent) 'artifacts'
+$backup=Join-Path $backupRoot ('vitis_recovery_'+[DateTime]::Now.ToString('yyyyMMdd_HHmmss')+'.zip')
+$updateLog=Join-Path $root 'results/vitis_update.log'
+Compress-Archive -LiteralPath @($platform,$target,(Join-Path $app 'src/dual_stream.h'),(Join-Path $app 'src/fh_sensor_control.h'),(Join-Path $app 'src/fh_frame_buffer.h'),$launch,(Join-Path $app 'src/lscript.ld')) -DestinationPath $backup
 # Source is maintained in the Vitis application; do not overwrite it.
 # Linker script is maintained alongside the application.
 $matches[0].targetSetup.bitstreamFile=$bit
@@ -75,9 +72,9 @@ try {
     $env:PATH=$toolchainBin+';'+$previousPath
     $env:GMAX_V24_WORKSPACE=$Workspace
     $env:GMAX_V24_XSA=$xsa
-    & 'C:/AMDDesignTools/2025.2/Vitis/bin/vitis.bat' -s (Join-Path $PSScriptRoot 'update_vitis_v24.py') | Tee-Object -FilePath (Join-Path $backup 'vitis_update.log')
+    & 'C:/AMDDesignTools/2025.2/Vitis/bin/vitis.bat' -s (Join-Path $PSScriptRoot 'update_vitis_v24.py') | Tee-Object -FilePath $updateLog
     if($LASTEXITCODE -ne 0){throw "Application build failed. Backups: $backup"}
-    if(!(Select-String -LiteralPath (Join-Path $backup 'vitis_update.log') -Pattern '^VITIS_V24_UPDATE_PASS$' -Quiet)){throw "Vitis update did not report success. Backups: $backup"}
+    if(!(Select-String -LiteralPath $updateLog -Pattern '^VITIS_V24_UPDATE_PASS$' -Quiet)){throw "Vitis update did not report success. Backups: $backup"}
 } finally {
     $env:PATH=$previousPath
     $env:GMAX_V24_WORKSPACE=$previousWorkspace
@@ -87,8 +84,8 @@ if((Get-FileHash $source).Hash -ne (Get-FileHash $target).Hash){throw 'Installed
 if((Get-FileHash (Join-Path $root 'exports/gmax3412_pl_ddr/software/lscript_v24.ld')).Hash -ne (Get-FileHash (Join-Path $app 'src/lscript.ld')).Hash){throw 'Installed linker reservation verification failed.'}
 & 'C:/AMDDesignTools/2025.2/tps/win64/python-3.13.0/python.exe' (Join-Path $PSScriptRoot 'verify_gmax3412_pl_ring_elf.py') (Join-Path $app 'build/FH_Carrier_Test.elf')
 if($LASTEXITCODE -ne 0){throw 'Built application failed memory reservation/MMU verification.'}
-Write-Host "PASS: v24 installed and application rebuilt. Backup: $backup"
-Write-Host 'Start a fresh hardware launch, then select 9 followed by P (start with 4 frames, default qualification mode). No hardware has been programmed by this script.'
+Write-Host "PASS: V25 installed and application rebuilt. Backup: $backup"
+Write-Host 'Start a fresh hardware launch, then select 9 followed by U for V25 dual stream. P remains the legacy single-stream qualification. No hardware has been programmed by this script.'
 
 
 

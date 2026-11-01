@@ -81,19 +81,16 @@ set_bus_skew 6.668 -from [get_cells -hier -regexp {u_gmax_a_rx/u_training/(idela
 # PCIe reference-clock monitor
 # ---------------------------------------------------------------------------
 # M2_PCIE_REFCLK_SOM_100M is the primary 100 MHz PCIe reference clock.
-# Vivado automatically derives the monitor clock at the IBUFDS_GTE4 ODIV2 pin.
-# Rename that auto-derived clock at its point of origin using the rename-only
-# form of create_generated_clock.  Because no -divide_by/-edges/etc. options
-# are supplied, this does not create a different waveform; it only gives the
-# existing derived clock a stable user-defined name.
-create_generated_clock -name FH_PCIE_REFCLK_ODIV2_50M \
+# Explicit /2 matches IBUFDS_GTE4 REFCLK_HROW_CK_SEL=01.
+# Avoid rename-only commands that fail during constraint reevaluation.
+create_generated_clock -name pcie_refclk_odiv2 -source [get_ports M2_PCIE_REFCLK_SOM_P_0] -divide_by 2 \
     [get_pins {u_design_1_wrapper/design_1_i/fh_pcie_refclk_monit_0/inst/u_ibufds_gte4_pcie_refclk/ODIV2}]
 
 # The 100 MHz primary and 50 MHz derivative remain related within one group.
 # The complete PCIe reference-clock family is asynchronous to clk_pl_0.
 set_clock_groups -name FH_ASYNC_PL_PCIE_REFCLK_FAMILY -asynchronous \
     -group [get_clocks {clk_pl_0}] \
-    -group [get_clocks {M2_PCIE_REFCLK_SOM_100M FH_PCIE_REFCLK_ODIV2_50M}]
+    -group [get_clocks {M2_PCIE_REFCLK_SOM_100M pcie_refclk_odiv2}]
 
 # sys_resetn is generated in the clk_pl_0 domain and intentionally drives the
 # asynchronous assertion input of the first 50 MHz reset synchronizer stage.
@@ -105,3 +102,11 @@ set_false_path -to [get_pins -hierarchical -regexp {.*fh_pcie_refclk_monit_0.*/r
 # Only the first ASYNC_REG stage is excepted; the second stage remains timed.
 set_false_path -to [get_pins -hier -regexp {.*gmax_pl_ring.*/calibrated_reg\[0\]/D}]
 set_false_path -to [get_pins -hier -regexp {.*pl_ddr_dci_reset.*/lock_sync_reg\[0\]/D}]
+
+# V25: DDR calibration enters the dual controller through its own two-flop synchronizer.
+set_false_path -to [get_pins -hier -regexp {.*gmax_dual_ring.*/calibrated_reg\[0\]/D}]
+
+# Bound the registered PCIe Gray-counter CDC bus.
+
+set_bus_skew 10.000 -from [get_cells -hier -regexp {.*fh_pcie_refclk_monit_0/inst/u_pcie_gray_cdc/src_ff_reg\[[0-9]+\]}] -to [get_cells -hier -regexp {.*fh_pcie_refclk_monit_0/inst/u_pcie_gray_cdc/syncstages_ff_reg\[0\]\[[0-9]+\]}]
+

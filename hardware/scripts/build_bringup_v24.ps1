@@ -12,7 +12,10 @@ Copy-Item (Join-Path $Workspace 'FH_Carrier_Test/src/lscript.ld') (Join-Path $ou
 if($LASTEXITCODE -ne 0){throw 'A53 compile/link failed'}
 & $python (Join-Path $PSScriptRoot 'verify_gmax3412_pl_ring_elf.py') "$out/BringupTest_v24.elf"
 if($LASTEXITCODE -ne 0){throw 'ELF memory validation failed'}
-$hashes=foreach($name in @('BringupTest_v24.c','BringupTest_v24.elf','lscript_v24.ld')) {
+Copy-Item (Join-Path $Workspace 'FH_Carrier_Test/src/dual_stream.h') (Join-Path $out 'dual_stream.h') -Force
+Copy-Item (Join-Path $Workspace 'FH_Carrier_Test/src/fh_sensor_control.h') (Join-Path $out 'fh_sensor_control.h') -Force
+Copy-Item (Join-Path $Workspace 'FH_Carrier_Test/src/fh_frame_buffer.h') (Join-Path $out 'fh_frame_buffer.h') -Force
+$hashes=foreach($name in @('BringupTest_v24.c','dual_stream.h','fh_sensor_control.h','fh_frame_buffer.h','BringupTest_v24.elf','lscript_v24.ld')) {
     $hash=Get-FileHash -LiteralPath (Join-Path $out $name) -Algorithm SHA256
     [pscustomobject]@{File=$name;SHA256=$hash.Hash}
 }

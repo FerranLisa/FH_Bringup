@@ -1,3 +1,32 @@
+# V27 specification controller
+
+Current main-project configuration is 16 channels. `gmax3412_sequence.v` adds
+independent exposure/readout, two 256-entry double-bank tables, skipped-slot
+accounting and per-frame metadata. Capability is 0x44530027. ROI is rows
+1024..2047. The default is 1 ms exposure and F+24 ROI at 250 Hz. See
+`../../../docs/DUAL_STREAM.md` for the register map, scope and short simulations.
+
+## Superseded V26 notes
+
+The main project sets `LANES=32` (384-bit parallel output), capability register
+0x68 = `0x44530026`, and uses 100 us exposure with one blank clock per line.
+The default remains 16 lanes for legacy unit tests, with capability 0x44530025.
+The shared controller issues exact 250 Hz triggers in an F + R ROI sequence.
+This widened parallel emulator is not an electrical sensor interface model.
+
+## Previous V25 register extension
+
+The packaged emulator now reports ID `0x34120025`. The V24-compatible controls
+below remain available. Offset `0x64` is a read/write ROI-mode register: bit 0
+selects 4096x1024 (rows 0..1023); zero selects 4096x3072. Mode is latched on
+accepted trigger, together with seed and blanking. Offset `0x68` reads capability
+`0x44530025`. WIDTH/HEIGHT registers continue to describe full-frame geometry.
+
+Both emulator instances in the main project share a synchronous trigger from
+`gmax_dual_ring`. See `../../../docs/DUAL_STREAM.md` for current integration and
+build instructions. The historical milestone notes below describe the original
+full-frame implementation; obsolete script names there are historical references.
+
 # gmax3412_emulator — first milestone
 
 Synthesizable GMAX3412 **parallel driver-output** development source with an
